@@ -25,7 +25,7 @@ export default function StatusFilter({ value, onChange }: { value: string; onCha
     return (
         <Suspense>
             <Select onValueChange={onChange} value={value}>
-                <SelectTrigger className="w-[140px] h-40 text-sm cursor-pointer">
+                <SelectTrigger className="w-[140px] h-40 text-sm cursor-pointer !bg-[#020618] text-slate-500 !outline-none">
                     <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>

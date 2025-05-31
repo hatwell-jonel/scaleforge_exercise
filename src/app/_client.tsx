@@ -10,10 +10,17 @@ import VerificationStatusFilter from '@/components/filters/verification-status-f
 import StatusFilter from '@/components/filters/status-filter';
 import { useEffect, useMemo } from 'react';
 import { useFilterStore } from '@/stores/filterStore';
+import DateTimePicker from '@/components/filters/datetime';
+import { LoaderCircle } from 'lucide-react';
 
 
 export function ClientComponent() {
-    const { verificationStatus, status } = useFilterStore();
+    const { 
+        verificationStatus, 
+        status,
+        dateTimeLastActiveFrom,
+        dateTimeLastActiveTo,
+     } = useFilterStore();
 
     const [triggerQuery, { data, loading, error }] = useLazyQuery(GET_MEMBERS, {
         fetchPolicy: 'cache-and-network',
@@ -30,13 +37,33 @@ export function ClientComponent() {
             filterVars.status = { equal: status };
         }
 
+            
+        if (dateTimeLastActiveFrom || dateTimeLastActiveTo) {
+            filterVars.dateTimeLastActive = {};
+
+            if (dateTimeLastActiveFrom) {
+                filterVars.dateTimeLastActive.greaterThanOrEqual = dateTimeLastActiveFrom;
+            }
+            
+            if (dateTimeLastActiveTo) {
+                filterVars.dateTimeLastActive.lesserThanOrEqual = dateTimeLastActiveTo;
+            }
+        }
+
+
         triggerQuery({
             variables: {
                 first: 100,
                 filter: filterVars,
             },
         });
-    }, [verificationStatus, status, triggerQuery]);
+    }, [
+        verificationStatus, 
+        status, 
+        triggerQuery,
+        dateTimeLastActiveFrom,
+        dateTimeLastActiveTo,
+    ]);
 
     const membersData = useMemo(() => data?.members?.edges?.map((edge: any) => edge.node) ?? [], [data]);
 
@@ -48,7 +75,8 @@ export function ClientComponent() {
             {
                 loading && !data ?  (
                     <div className='h-[500px] flex items-center justify-center'>
-                        loading...
+                        {/* loading... */}
+                        <LoaderCircle className="h-20 w-20 animate-spin" color='#FBBD2C'  />
                     </div>
                 ) : (
                     <DataTable columns={columns} data={membersData} />

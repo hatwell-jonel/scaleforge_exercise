@@ -26,7 +26,7 @@ export default function VerificationStatusFilter({ value, onChange }: { value: s
     return (
         <Suspense>
             <Select onValueChange={onChange} value={value}>
-                <SelectTrigger className="w-[170px] h-40 text-sm cursor-pointer">
+                <SelectTrigger className="w-[170px] h-40 text-sm cursor-pointer !bg-[#020618] text-slate-500 !outline-none">
                     <SelectValue placeholder="Verification Status" />
                 </SelectTrigger>
                 <SelectContent>
