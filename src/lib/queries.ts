@@ -25,3 +25,25 @@ export const GET_MEMBERS = gql`
     }
   }
 `;
+
+
+export const GET_VERIFICATION_STATUS_VALUES = gql`
+  query GetMemberVerificationStatus {
+    __type(name: "MemberVerificationStatus") {
+      enumValues {
+        name
+      }
+    }
+  }
+`
+
+
+export const GET_STATUS_VALUES = gql`
+  query GetMemberStatus {
+    __type(name: "MemberStatus") {
+      enumValues {
+        name
+      }
+    }
+  }
+`
