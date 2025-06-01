@@ -184,9 +184,9 @@ function FilterBlock() {
   }
 
   return (
-    <section className="table-head-color p-4 rounded-t-md">
+    <section className="table-head-color p-2 py-4 rounded-t-md">
         <div className="flex flex-wrap items-center gap-2">
-            <span className="border-r border-white pr-4 font-semibold tracking-wide">
+            <span className="border-r border-white pr-5 font-semibold tracking-wide">
                 Filter
             </span>
 
