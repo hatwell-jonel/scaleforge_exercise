@@ -156,7 +156,7 @@ export default function DateTimeRangePicker({ onApply, className }: DateTimeRang
                 <Button
                 variant="outline"
                 className={cn(
-                    "w-[300px] justify-start text-left font-normal",
+                    "w-[300px] justify-start text-left font-normal !bg-[#020618]",
                     !date?.from && !date?.to && "text-muted-foreground",
                     className,
                 )}
