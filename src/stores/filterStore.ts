@@ -9,11 +9,21 @@ type FilterSelectLists = {
 };
 
 type FilterState = {
+
+  filterListData: string[];
+  setFilterListData: (value: string[]) => void;
+
   verificationStatus: string;
   setVerificationStatus: (value: string) => void;
 
   status: string;
   setStatus: (value: string) => void;
+
+  dateRegistered: {
+    from: string
+    to: string
+  }
+  setDateRegistered: (value: { from: string; to: string }) => void
 
   dateTimeLastActiveFrom: string; // ISO string
   setDateTimeLastActiveFrom: (value: string) => void;
@@ -33,21 +43,27 @@ type FilterState = {
   domainList : string[];
   setDomainList: (value: string[]) => void;
 
-  filteredNameList : string[];
-  setFilteredNameList: (value: string[]) => void;
+  // filterNameList : string[];
+  // setFilterNameList: (value: string[]) => void;
 
   filters: FilterSelectLists;
-  setFilters: (filters: Partial<FilterSelectLists>) => void;
+   setFilters: (newFilters: Partial<FilterSelectLists>) => void
 
 };
 
 
 export const useFilterStore = create<FilterState>((set) => ({
+  filterListData: [],
+  setFilterListData: (value) => set({ filterListData: value }),
+
   verificationStatus: '',
   setVerificationStatus: (value) => set({ verificationStatus: value }),
 
   status: '',
   setStatus: (value) => set({ status: value }),
+
+  dateRegistered: { from: '', to: '' },
+  setDateRegistered: (value) => set({ dateRegistered: value }),
 
   dateTimeLastActiveFrom: '',
   setDateTimeLastActiveFrom: (value) => set({ dateTimeLastActiveFrom: value }),
@@ -67,8 +83,8 @@ export const useFilterStore = create<FilterState>((set) => ({
   domainList: [],
   setDomainList: (value) => set({ domainList: value }),
 
-  filteredNameList: [],
-  setFilteredNameList: (value) => set({ filteredNameList: value }),
+  // filterNameList: [],
+  // setFilterNameList: (value) => set({ filterNameList: value }),
 
   filters: {
     filterNameList: [],
@@ -76,11 +92,5 @@ export const useFilterStore = create<FilterState>((set) => ({
     filterMobileNumberList: [],
     filterDomainList: [],
   },
-  setFilters: (newFilters) =>
-    set((state) => ({
-      filters: {
-        ...state.filters,
-        ...newFilters,
-      },
-    })),
+  setFilters: (newFilters) => set((state) => ({ filters: { ...state.filters, ...newFilters } })),
 }));

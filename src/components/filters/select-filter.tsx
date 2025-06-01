@@ -1,124 +1,78 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { Search } from "lucide-react"
-import { Input } from "@/components/ui/input"
+import { useState, useEffect } from "react"
+import { ChevronDown, Search } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "../ui/label"
-import { useFilterStore } from "@/stores/filterStore"
-
-type AllowedFilterKey =
-  | "filterNameList"
-  | "filterEmailList"
-  | "filterMobileNumberList"
-  | "filterDomainList";
-
-interface DropdownProps {
-    list: string[]
-    filterKey: AllowedFilterKey;
-    placeholder?: string;
-    onSelectionChange?: (selectedUsernames: string[]) => void
+import { Input } from "@/components/ui/input"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { cn } from "@/lib/utils"
+interface MultiSelectFilterProps {
+  label: string
+  list: string[]
+  selectedValues: string[] // controlled selected values
+  onChange: (selected: string[]) => void
+  className?: string
 }
 
-export default function SelectFilter({
-  list,
-  filterKey,
-  placeholder = "Search",
-  onSelectionChange
-}: DropdownProps) {
-  const { setFilters } = useFilterStore();
+export default function SelectFilter({ label, list, selectedValues, onChange, className }: MultiSelectFilterProps) {
+  const [open, setOpen] = useState(false)
+  const [searchValue, setSearchValue] = useState("")
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selected, setSelected] = useState<string[]>([]);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const selectedRef = useRef<string[]>([]);
+  const filteredList = list.filter((item) =>
+    item.toLowerCase().includes(searchValue.toLowerCase())
+  )
 
-  useEffect(() => {
-    selectedRef.current = selected;
-  }, [selected]);
-
-  const filteredData = list.filter((item) =>
-    item.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-        setFilters({ [filterKey]: selectedRef.current });
-        setSelected([]);
-
-        console.log("selected", selectedRef.current);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [setFilters, filterKey]);
-
-  const handleToggle = (value: string) => {
-    const newSelection = selected.includes(value)
-      ? selected.filter((item) => item !== value)
-      : [...selected, value];
-
-    setSelected(newSelection);
-    onSelectionChange?.(newSelection);
-  };
-
-  const handleFilterSearch = () => {
-    setFilters({ [filterKey]: selectedRef.current });
-    setSelected([]);
-  };
+  const toggleValue = (value: string) => {
+    if (selectedValues.includes(value)) {
+      onChange(selectedValues.filter((v) => v !== value))
+    } else {
+      onChange([...selectedValues, value])
+    }
+  }
 
   return (
-    <div ref={dropdownRef} className="relative">
-      <div className="relative">
-        <Input
-          ref={inputRef}
-          type="text"
-          placeholder={placeholder}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onFocus={() => setIsOpen(true)}
-          className="!bg-[#020618] text-white placeholder-gray-400 pr-10 w-[200px] h-9"
-        />
-        <Search
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 cursor-pointer"
-          onClick={() => {
-            setIsOpen(false);
-            handleFilterSearch();
-          }}
-        />
-      </div>
-
-      {isOpen && (
-        <div className="absolute z-10 mt-1 w-full !bg-[#020618] border-2 rounded-sm max-h-64 overflow-y-auto custom-scrollbar">
-          {filteredData.length > 0 ? (
-            filteredData.map((data: string) => (
-              <div
-                key={data}
-                className="flex items-center space-x-3 px-2 hover:bg-gray-800 cursor-pointer"
-                onClick={() => handleToggle(data)}
-              >
-                <Checkbox
-                  id={data}
-                  checked={selected.includes(data)}
-                  onCheckedChange={() => handleToggle(data)}
-                  className="border-gray-600 data-[state=checked]:bg-blue-500 border"
-                />
-                <Label htmlFor={data} className="py-2 text-[#FBBD2C] text-sm cursor-pointer flex-1">
-                  {data}
-                </Label>
-              </div>
-            ))
-          ) : (
-            <div className="p-4 text-gray-400 text-center">No data found</div>
-          )}
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className={cn("w-[140px] justify-between !bg-[#020618] text-slate-500 cursor-pointer", className)}
+        >
+          {label}
+          <ChevronDown className="ml-2 size-5" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[280px] p-0 !bg-[#020618]">
+        <div className="p-2">
+          <div className="relative">
+            <Input
+              placeholder={`Search ${label}`}
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              className="!bg-[#020618] border-gray-300 text-gray-300 placeholder:text-gray-500"
+            />
+            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+          </div>
         </div>
-      )}
-    </div>
-  );
+        <div className="max-h-60 overflow-auto custom-scrollbar">
+          {filteredList.map((item, index) => (
+            <div
+              key={`${item}-${index}`}
+              className={cn("flex items-center space-x-3 px-3 py-2 cursor-pointer hover:bg-gray-800")}
+              onClick={() => toggleValue(item)}
+            >
+              <Checkbox
+                checked={selectedValues.includes(item)}
+                onCheckedChange={() => toggleValue(item)}
+                className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+              />
+              <span className="text-sm text-yellow-400">{item}</span>
+            </div>
+          ))}
+        </div>
+      </PopoverContent>
+    </Popover>
+  )
 }
-

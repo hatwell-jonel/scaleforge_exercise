@@ -65,7 +65,6 @@ export const columns: ColumnDef<any>[] = [
         accessorKey: "email",
         header: "Email address", 
         cell: ({ row }) => {
-            console.log(row.original);
             const { emailAddress } = row.original;
             return emailAddress ? <span className="text-slate-400" >{emailAddress}</span> : "-";
         },
@@ -90,8 +89,8 @@ export const columns: ColumnDef<any>[] = [
         accessorKey: "dateRegistered",
         header: "Date Registered", 
         cell: ({ row }) => {
-            const { dateRegistered } = row.original;
-            return dateRegistered ? <span className="text-slate-400" >{dateRegistered}</span> : "-";
+            const { dateTimeCreated } = row.original;
+            return dateTimeCreated ? <span className="text-slate-400" >{format(new Date(dateTimeCreated), 'yyyy MMM dd')}</span> : "-";
         },
     },
     {

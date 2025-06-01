@@ -11,14 +11,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { Skeleton } from '../ui/skeleton'
 import { capitalize } from '@/lib/utils'
 
 
 export default function StatusFilter({ value, onChange }: { value: string; onChange: (val: string) => void }) {
 
     const { data, loading, error } = useQuery(GET_STATUS_VALUES, { client })
-    if (loading) return <Skeleton className="h-8 w-[140px]" />;
     if (error) return <p>Error: {error.message}</p>
     const statuses = data?.__type?.enumValues ?? [];
 
