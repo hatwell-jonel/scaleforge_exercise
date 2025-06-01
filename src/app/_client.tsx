@@ -12,7 +12,9 @@ import { useEffect, useMemo } from 'react';
 import { useFilterStore } from '@/stores/filterStore';
 import { LoaderCircle } from 'lucide-react';
 import  DateTimeRangePicker from '@/components/filters/datetime';
-
+// import NameFilter from '@/components/filters/name-filter';
+import SelectFilter from '@/components/filters/select-filter';
+import NameFilter from '@/components/filters/name-filter';
 
 export function ClientComponent() {
     const { 
@@ -20,6 +22,12 @@ export function ClientComponent() {
         status,
         dateTimeLastActiveFrom,
         dateTimeLastActiveTo,
+        setNameList,
+        setEmailList,
+        setMobileNumberList,
+        setDomainList,
+        filteredNameList,
+        filters, // group filter
      } = useFilterStore();
 
     const [triggerQuery, { data, loading, error }] = useLazyQuery(GET_MEMBERS, {
@@ -27,7 +35,7 @@ export function ClientComponent() {
     });
 
     useEffect(() => {
-        const filterVars: any = {};
+        const filterVars :  any = {};
 
         if (verificationStatus) {
             filterVars.verificationStatus = { equal: verificationStatus };
@@ -50,6 +58,26 @@ export function ClientComponent() {
             }
         }
 
+        // if (filteredNameList.length > 0) {
+        //     filterVars.name = { in: filteredNameList };
+        // }
+
+        if (filters.filterNameList.length > 0) {
+            filterVars.name = { in: filters.filterNameList };
+        }
+
+        if (filters.filterEmailList.length > 0) {
+            filterVars.emailAddress = { in: filters.filterEmailList };
+        }
+
+        if (filters.filterMobileNumberList.length > 0) {
+            filterVars.mobileNumber = { in: filters.filterMobileNumberList };
+        }
+
+        if (filters.filterDomainList.length > 0) {
+            filterVars.domain = { in: filters.filterDomainList };
+        }
+
 
         triggerQuery({
             variables: {
@@ -63,9 +91,35 @@ export function ClientComponent() {
         triggerQuery,
         dateTimeLastActiveFrom,
         dateTimeLastActiveTo,
+        filteredNameList,
+        filters
     ]);
 
     const membersData = useMemo(() => data?.members?.edges?.map((edge: any) => edge.node) ?? [], [data]);
+
+
+    useEffect(() => {
+        if (membersData.length > 0) {
+            const getUnique = (arr: any[]) =>
+            Array.from(new Set(arr.filter((item) => item != null))) as string[];
+
+            const names = getUnique(membersData.map((m: any) => m.name));
+            const emails = getUnique(membersData.map((m: any) => m.emailAddress));
+            const mobileNumbers = getUnique(membersData.map((m: any) => m.mobileNumber));
+            const domains = getUnique(membersData.map((m: any) => m.domain));
+
+            setNameList(names);
+            setEmailList(emails);
+            setMobileNumberList(mobileNumbers);
+            setDomainList(domains);
+        }
+    }, [
+        membersData,
+        setNameList,
+        setEmailList,
+        setMobileNumberList,
+        setDomainList,
+    ]);
 
     if (error) return <p>Error: {error.message}</p>;
 
@@ -86,6 +140,7 @@ export function ClientComponent() {
     )
 }
 
+
 function FilterBlock() {
     const {
         verificationStatus,
@@ -94,6 +149,10 @@ function FilterBlock() {
         setStatus,
         setDateTimeLastActiveFrom,
         setDateTimeLastActiveTo,
+        nameList,
+        emailList,
+        mobileNumberList,
+        domainList,
     } = useFilterStore();
 
     const handleApply = (startDate: Date, endDate: Date) => {
@@ -107,10 +166,15 @@ function FilterBlock() {
         <section className="table-head-color p-2 py-4 rounded-t-md flex gap-2 items-center">
             <span className="border-r border-white pr-2 font-semibold tracking-wide">Filter</span>
             <div className="flex gap-2">
+                {/* <NameFilter usernames={nameList} /> */}
+                <SelectFilter list={nameList} filterKey="filterNameList" placeholder='Name' />
                 <VerificationStatusFilter
                     value={verificationStatus}
                     onChange={setVerificationStatus}
                 />
+                <SelectFilter list={emailList} filterKey="filterEmailList" placeholder='Email Address' />
+                <SelectFilter list={mobileNumberList} filterKey="filterMobileNumberList" placeholder='Search Mobile Number' />
+                <SelectFilter list={domainList} filterKey="filterDomainList" placeholder='Search Domain' />
                 <StatusFilter
                     value={status}
                     onChange={setStatus}

@@ -65,8 +65,9 @@ export const columns: ColumnDef<any>[] = [
         accessorKey: "email",
         header: "Email address", 
         cell: ({ row }) => {
-            const { email } = row.original;
-            return email ? <span className="text-slate-400" >{email}</span> : "-";
+            console.log(row.original);
+            const { emailAddress } = row.original;
+            return emailAddress ? <span className="text-slate-400" >{emailAddress}</span> : "-";
         },
     },
     {
