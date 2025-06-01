@@ -176,25 +176,6 @@ function FilterBlock() {
     setFilters,
   } = useFilterStore()
 
-    const handleDateRegistered = (date?: Date) => {
-        if (date) {
-            const from = new Date(date)
-            from.setHours(0, 0, 0, 0)
-
-            const to = new Date(date)
-            to.setHours(23, 59, 59, 999)
-
-            // You could store both, but since you're using a single `dateRegistered`, just use one object:
-            setDateRegistered({
-                from: from.toISOString(),
-                to: to.toISOString(),
-            })
-        } else {
-            setDateRegistered({ from: "", to: "" })
-        }
-    }
-
-
   const handleApply = (startDate: Date, endDate: Date) => {
     const from = new Date(startDate)
     const to = new Date(endDate)
@@ -203,63 +184,76 @@ function FilterBlock() {
   }
 
   return (
-    <section className="table-head-color p-2 py-4 rounded-t-md flex gap-2 items-center">
-      <span className="border-r border-white pr-2 font-semibold tracking-wide">Filter</span>
-      <div className="flex gap-2">
-        
-        <SelectFilter
-            label="Name"
-            list={nameList}
-            selectedValues={filters.filterNameList}
-            onChange={(newValues) => setFilters({ filterNameList: newValues })}
-        />
+    <section className="table-head-color p-4 rounded-t-md">
+        <div className="flex flex-wrap items-center gap-2">
+            <span className="border-r border-white pr-4 font-semibold tracking-wide">
+                Filter
+            </span>
 
-        <VerificationStatusFilter value={verificationStatus} onChange={setVerificationStatus} />
+            <div className="flex flex-wrap gap-1">
+                <SelectFilter
+                    label="Name"
+                    list={nameList}
+                    selectedValues={filters.filterNameList}
+                    onChange={(newValues) => setFilters({ filterNameList: newValues })}
+                    className="min-w-[140px]"
+                />
 
+                <VerificationStatusFilter
+                    value={verificationStatus}
+                    onChange={setVerificationStatus}
+                />
 
-        <SelectFilter
-            label="Email"
-            list={emailList}
-            selectedValues={filters.filterEmailList}
-            onChange={(newValues) => setFilters({ filterEmailList: newValues })}
-        />
+                <SelectFilter
+                    label="Email"
+                    list={emailList}
+                    selectedValues={filters.filterEmailList}
+                    onChange={(newValues) => setFilters({ filterEmailList: newValues })}
+                    className="min-w-[140px]"
+                />
 
-        <SelectFilter
-            label="Mobile Number"
-            list={mobileNumberList}
-            selectedValues={filters.filterMobileNumberList}
-            onChange={(newValues) => setFilters({ filterMobileNumberList: newValues })}
-            className="w-[160px]"
-        />
+                <SelectFilter
+                    label="Mobile Number"
+                    list={mobileNumberList}
+                    selectedValues={filters.filterMobileNumberList}
+                    onChange={(newValues) =>
+                    setFilters({ filterMobileNumberList: newValues })
+                    }
+                    className="min-w-[160px]"
+                />
 
-        <SelectFilter
-            label="Domain"
-            list={domainList}
-            selectedValues={filters.filterDomainList}
-            onChange={(newValues) => setFilters({ filterDomainList: newValues })}
-        />
+                <SelectFilter
+                    label="Domain"
+                    list={domainList}
+                    selectedValues={filters.filterDomainList}
+                    onChange={(newValues) => setFilters({ filterDomainList: newValues })}
+                    className="min-w-[140px]"
+                />
 
-       <DateFilter
-            value={{
-                from: dateRegistered.from ? new Date(dateRegistered.from) : undefined,
-                to: dateRegistered.to ? new Date(dateRegistered.to) : undefined,
-            }}
-            onChange={(range) => {
-                if (range) {
-                setDateRegistered({
-                    from: range.from.toISOString(),
-                    to: range.to.toISOString(),
-                })
-                } else {
-                setDateRegistered({ from: "", to: "" })
-                }
-            }}
-        />
+                <DateFilter
+                    value={{
+                    from: dateRegistered.from
+                        ? new Date(dateRegistered.from)
+                        : undefined,
+                    to: dateRegistered.to ? new Date(dateRegistered.to) : undefined,
+                    }}
+                    onChange={(range) => {
+                    if (range) {
+                        setDateRegistered({
+                        from: range.from.toISOString(),
+                        to: range.to.toISOString(),
+                        })
+                    } else {
+                        setDateRegistered({ from: "", to: "" })
+                    }
+                    }}
+                />
 
-        <StatusFilter value={status} onChange={setStatus} />
+                <StatusFilter value={status} onChange={setStatus} />
 
-        <DateTimeRangePicker onApply={handleApply} />
-      </div>
+                <DateTimeRangePicker onApply={handleApply} />
+            </div>
+        </div>
     </section>
   )
 }
