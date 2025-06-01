@@ -10,8 +10,8 @@ import VerificationStatusFilter from '@/components/filters/verification-status-f
 import StatusFilter from '@/components/filters/status-filter';
 import { useEffect, useMemo } from 'react';
 import { useFilterStore } from '@/stores/filterStore';
-import DateTimePicker from '@/components/filters/datetime';
 import { LoaderCircle } from 'lucide-react';
+import  DateTimeRangePicker from '@/components/filters/datetime';
 
 
 export function ClientComponent() {
@@ -92,8 +92,16 @@ function FilterBlock() {
         status,
         setVerificationStatus,
         setStatus,
+        setDateTimeLastActiveFrom,
+        setDateTimeLastActiveTo,
     } = useFilterStore();
 
+    const handleApply = (startDate: Date, endDate: Date) => {
+        const from = new Date(startDate);
+        const to = new Date(endDate);
+        setDateTimeLastActiveFrom(from.toISOString());
+        setDateTimeLastActiveTo(to.toISOString());
+    }
 
     return (
         <section className="table-head-color p-2 py-4 rounded-t-md flex gap-2 items-center">
@@ -107,6 +115,7 @@ function FilterBlock() {
                     value={status}
                     onChange={setStatus}
                 />
+                <DateTimeRangePicker onApply={handleApply} />
             </div>
         </section>
     );

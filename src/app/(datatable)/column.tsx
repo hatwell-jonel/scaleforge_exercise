@@ -36,7 +36,7 @@ export const columns: ColumnDef<any>[] = [
         header: "Name",
         cell: ({ row }) => {
             const { name } = row.original;
-            return name ? <span className="text-[#FBBD2C]">{name}</span> : "-";
+            return name ? <span className="text-[#FBBD2C]" >{name}</span> : "-";
         },
     },
     {
@@ -58,7 +58,6 @@ export const columns: ColumnDef<any>[] = [
         accessorKey: "balance",
         header: "Balance", 
         cell: ({ row }) => {
-            // const { balance } = row.original;
             return <span className="text-slate-400" >{Math.floor(Math.random() * 10000).toFixed(2)}</span>
         },
     },

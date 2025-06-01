@@ -131,6 +131,10 @@
 }
 
 
+.yellow-accent {
+  color: #FBBD2C;
+}
+
 /* SCROLLBAR */
 .custom-scrollbar::-webkit-scrollbar {
   width: 3px;
@@ -148,3 +152,4 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: #525252 
 } 
+
